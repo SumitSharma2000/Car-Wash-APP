@@ -1,0 +1,332 @@
+<!-- Top Header -->
+<header class="dashboard-header">
+  <div class="header-left">
+    <div class="provider-info">
+      <div class="provider-avatar">
+        <i class="fas fa-user-tie"></i>
+      </div>
+      <div class="provider-details">
+        <h3>{{currentUser?.name}}</h3>
+        <div class="status-indicator">
+          <span class="status-dot online"></span>
+          <span>Online</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="header-center">
+    <div class="quick-stats">
+      <div class="stat-item">
+        <span class="stat-value">{{stats.todayBookings}}</span>
+        <span class="stat-label">Today</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">${{stats.todayRevenue}}</span>
+        <span class="stat-label">Revenue</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="header-right">
+    <button class="action-btn" (click)="simulateBooking()">
+      <i class="fas fa-plus"></i>
+      Test Booking
+    </button>
+    <button class="action-btn" (click)="generateReport()">
+      <i class="fas fa-chart-line"></i>
+      Report
+    </button>
+    <div class="notifications" (click)="toggleNotifications()">
+      <i class="fas fa-bell"></i>
+      <span class="notification-count" *ngIf="notificationCount > 0">{{notificationCount}}</span>
+    </div>
+    <div class="user-menu" (click)="toggleUserMenu()">
+      <i class="fas fa-cog"></i>
+    </div>
+    <button class="logout-btn" (click)="logout()">
+      <i class="fas fa-sign-out-alt"></i>
+    </button>
+  </div>
+</header>
+
+<!-- KPI Summary Cards -->
+<section class="kpi-section">
+  <div class="kpi-grid">
+    <div class="kpi-card current" (click)="filterBookings('ACTIVE')">
+      <div class="kpi-icon">
+        <i class="fas fa-play-circle"></i>
+      </div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{stats.currentBookings}}</div>
+        <div class="kpi-label">Current</div>
+        <div class="kpi-trend">
+          <i class="fas fa-arrow-up"></i>
+          <span>+12%</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="kpi-card pending" (click)="filterBookings('PENDING')">
+      <div class="kpi-icon">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{stats.pendingBookings}}</div>
+        <div class="kpi-label">Pending</div>
+        <div class="kpi-trend">
+          <i class="fas fa-arrow-up"></i>
+          <span>+5%</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="kpi-card completed" (click)="filterBookings('COMPLETED')">
+      <div class="kpi-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{stats.completedBookings}}</div>
+        <div class="kpi-label">Completed</div>
+        <div class="kpi-trend">
+          <i class="fas fa-arrow-up"></i>
+          <span>+8%</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="kpi-card payments" (click)="showPayments = true">
+      <div class="kpi-icon">
+        <i class="fas fa-dollar-sign"></i>
+      </div>
+      <div class="kpi-content">
+        <div class="kpi-value">${{stats.totalEarnings}}</div>
+        <div class="kpi-label">Payments</div>
+        <div class="kpi-trend">
+          <i class="fas fa-arrow-up"></i>
+          <span>+15%</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="kpi-card cancelled" (click)="filterBookings('CANCELLED')">
+      <div class="kpi-icon">
+        <i class="fas fa-times-circle"></i>
+      </div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{stats.cancelledBookings}}</div>
+        <div class="kpi-label">Cancelled</div>
+        <div class="kpi-trend">
+          <i class="fas fa-arrow-down"></i>
+          <span>-3%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main Dashboard Content -->
+<div class="dashboard-content">
+  <!-- Live Bookings Feed -->
+  <div class="bookings-panel">
+    <div class="panel-header">
+      <h3>Live Bookings Feed</h3>
+      <div class="panel-controls">
+        <input type="text" placeholder="Search bookings..." [(ngModel)]="searchTerm" class="search-input">
+        <select [(ngModel)]="statusFilter" class="filter-select">
+          <option value="">All Status</option>
+          <option value="PENDING">Pending</option>
+          <option value="ACTIVE">Active</option>
+          <option value="COMPLETED">Completed</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="bookings-list">
+      <div class="booking-item" *ngFor="let booking of filteredBookings" 
+           [class]="'status-' + booking.status.toLowerCase()"
+           (click)="openBookingDetails(booking)">
+        <div class="booking-header">
+          <div class="customer-info">
+            <div class="customer-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="customer-details">
+              <h4>{{booking.customerName}}</h4>
+              <span class="booking-id">#{{booking.id}}</span>
+            </div>
+          </div>
+          <div class="booking-status">
+            <span class="status-badge" [class]="'status-' + booking.status.toLowerCase()">
+              {{booking.status}}
+            </span>
+          </div>
+        </div>
+        
+        <div class="booking-details">
+          <div class="detail-item">
+            <i class="fas fa-car"></i>
+            <span>{{booking.serviceType}}</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-clock"></i>
+            <span>{{booking.date}} {{booking.time}}</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{booking.location}}</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-dollar-sign"></i>
+            <span>${{booking.price}}</span>
+          </div>
+        </div>
+        
+        <div class="booking-actions" *ngIf="booking.status === 'PENDING'">
+          <button class="action-btn accept" (click)="acceptBooking(booking, $event)">
+            <i class="fas fa-check"></i>
+            Accept
+          </button>
+          <button class="action-btn reject" (click)="rejectBooking(booking, $event)">
+            <i class="fas fa-times"></i>
+            Reject
+          </button>
+        </div>
+        
+        <div class="booking-actions" *ngIf="booking.status === 'ACCEPTED'">
+          <button class="action-btn start" (click)="startService(booking, $event)">
+            <i class="fas fa-play"></i>
+            Start
+          </button>
+        </div>
+        
+        <div class="booking-actions" *ngIf="booking.status === 'ACTIVE'">
+          <button class="action-btn complete" (click)="completeService(booking, $event)">
+            <i class="fas fa-check-circle"></i>
+            Complete
+          </button>
+        </div>
+        
+        <div class="booking-actions" *ngIf="booking.status === 'COMPLETED'">
+          <button class="action-btn invoice" (click)="generateInvoice(booking, $event)">
+            <i class="fas fa-file-invoice"></i>
+            Invoice
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Charts & Analytics -->
+  <div class="analytics-panel">
+    <div class="chart-container">
+      <h3>Status Distribution</h3>
+      <div class="donut-chart">
+        <div class="chart-legend">
+          <div class="legend-item" *ngFor="let item of chartData">
+            <span class="legend-color" [style.background-color]="item.color"></span>
+            <span class="legend-label">{{item.label}}: {{item.value}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="revenue-chart">
+      <h3>Revenue Trend</h3>
+      <div class="line-chart">
+        <div class="chart-bars">
+          <div class="bar" *ngFor="let day of revenueData" 
+               [style.height.%]="(day.amount / maxRevenue) * 100">
+            <span class="bar-value">${{day.amount}}</span>
+          </div>
+        </div>
+        <div class="chart-labels">
+          <span *ngFor="let day of revenueData">{{day.day}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Details Sliding Panel -->
+<div class="sliding-panel" [class.open]="selectedBooking" (click)="closeBookingDetails()">
+  <div class="panel-content" (click)="$event.stopPropagation()" *ngIf="selectedBooking">
+    <div class="panel-header">
+      <h3>Booking Details</h3>
+      <button class="close-btn" (click)="closeBookingDetails()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="booking-full-details">
+      <div class="detail-section">
+        <h4>Customer Information</h4>
+        <p><strong>Name:</strong> {{selectedBooking.customerName}}</p>
+        <p><strong>Phone:</strong> {{selectedBooking.phone}}</p>
+        <p><strong>Email:</strong> {{selectedBooking.email}}</p>
+      </div>
+      
+      <div class="detail-section">
+        <h4>Service Details</h4>
+        <p><strong>Service:</strong> {{selectedBooking.serviceType}}</p>
+        <p><strong>Date & Time:</strong> {{selectedBooking.date}} {{selectedBooking.time}}</p>
+        <p><strong>Location:</strong> {{selectedBooking.location}}</p>
+        <p><strong>Price:</strong> ${{selectedBooking.price}}</p>
+      </div>
+      
+      <div class="detail-section">
+        <h4>Status & Actions</h4>
+        <div class="status-timeline">
+          <div class="timeline-item" [class.completed]="selectedBooking.status !== 'PENDING'">
+            <i class="fas fa-clock"></i>
+            <span>Booking Received</span>
+          </div>
+          <div class="timeline-item" [class.completed]="['ACCEPTED', 'ACTIVE', 'COMPLETED'].includes(selectedBooking.status)">
+            <i class="fas fa-check"></i>
+            <span>Accepted</span>
+          </div>
+          <div class="timeline-item" [class.completed]="['ACTIVE', 'COMPLETED'].includes(selectedBooking.status)">
+            <i class="fas fa-play"></i>
+            <span>Service Started</span>
+          </div>
+          <div class="timeline-item" [class.completed]="selectedBooking.status === 'COMPLETED'">
+            <i class="fas fa-check-circle"></i>
+            <span>Completed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications Panel -->
+<div class="notifications-panel" [class.open]="showNotifications">
+  <div class="panel-header">
+    <h3>Notifications</h3>
+    <button class="close-btn" (click)="showNotifications = false">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="notifications-list">
+    <div class="notification-item" *ngFor="let notification of notifications">
+      <div class="notification-icon">
+        <i [class]="notification.icon"></i>
+      </div>
+      <div class="notification-content">
+        <p>{{notification.message}}</p>
+        <span class="notification-time">{{notification.time}}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notifications -->
+<div class="toast-container">
+  <div class="toast" *ngFor="let toast of toasts" [class]="toast.type">
+    <i [class]="toast.icon"></i>
+    <span>{{toast.message}}</span>
+    <button (click)="removeToast(toast)">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</div>

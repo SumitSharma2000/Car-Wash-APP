@@ -1,0 +1,63 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Maven ###
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+### Logs ###
+*.log
+logs/
+
+### Database ###
+*.db
+*.sqlite
+
+### Application Properties ###
+application-local.yml
+application-dev.yml
+application-prod.yml
+
+### Security ###
+*.key
+*.pem
+*.p12
+*.jks
+
+### SonarQube ###
+.scannerwork/
+
+### OS ###
+.DS_Store
+Thumbs.db

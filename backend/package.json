@@ -1,0 +1,18 @@
+{
+  "name": "carwash-backend-tests",
+  "version": "1.0.0",
+  "description": "Test dashboard for Car Wash Backend",
+  "scripts": {
+    "start": "karma start",
+    "test": "karma start --single-run",
+    "dashboard": "karma start --no-single-run"
+  },
+  "devDependencies": {
+    "karma": "^6.4.2",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "karma-coverage": "^2.2.1",
+    "jasmine-core": "^5.1.1"
+  }
+}
